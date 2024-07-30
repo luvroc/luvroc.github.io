@@ -1,0 +1,191 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>理解计算机系统 | uloveRock?</title><meta name="author" content="luvroc"><meta name="copyright" content="luvroc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="理解计算机系统Chapter1-&gt;FastRead计算机系统由硬件和软件组成并共同运行应用程序。了解这些部件如何工作、如何影响程序的准确性和性能是阅读此书的目标。 Example1–&gt;Hello.chello程序从一个源程序（或者源文件）开始。它存储在磁盘中，由01写成。  这类可通过ascii码或其他编码转为明显可理解的字符文件为文本文件，其他文件为二进制文件。 此hello.c可被">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解计算机系统">
+<meta property="og:url" content="http://luvroc.github.io/2024/03/06/csapp/">
+<meta property="og:site_name" content="uloveRock?">
+<meta property="og:description" content="理解计算机系统Chapter1-&gt;FastRead计算机系统由硬件和软件组成并共同运行应用程序。了解这些部件如何工作、如何影响程序的准确性和性能是阅读此书的目标。 Example1–&gt;Hello.chello程序从一个源程序（或者源文件）开始。它存储在磁盘中，由01写成。  这类可通过ascii码或其他编码转为明显可理解的字符文件为文本文件，其他文件为二进制文件。 此hello.c可被">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://q1.qlogo.cn/g?b=qq&nk=2316139590&s=640">
+<meta property="article:published_time" content="2024-03-06T15:31:39.000Z">
+<meta property="article:modified_time" content="2024-05-07T16:19:49.585Z">
+<meta property="article:author" content="luvroc">
+<meta property="article:tag" content="system">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://q1.qlogo.cn/g?b=qq&nk=2316139590&s=640"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://luvroc.github.io/2024/03/06/csapp/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '理解计算机系统',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-05-08 00:19:49'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://q1.qlogo.cn/g?b=qq&amp;nk=2316139590&amp;s=640" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="uloveRock?"><span class="site-name">uloveRock?</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">理解计算机系统</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-06T15:31:39.000Z" title="发表于 2024-03-06 23:31:39">2024-03-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-05-07T16:19:49.585Z" title="更新于 2024-05-08 00:19:49">2024-05-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B1%87%E7%BC%96-%E7%B3%BB%E7%BB%9F/">汇编&amp;&amp;系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="理解计算机系统"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="理解计算机系统"><a href="#理解计算机系统" class="headerlink" title="理解计算机系统"></a>理解计算机系统</h1><h2 id="Chapter1-FastRead"><a href="#Chapter1-FastRead" class="headerlink" title="Chapter1-&gt;FastRead"></a>Chapter1-&gt;FastRead</h2><p>计算机系统由硬件和软件组成并共同运行应用程序。了解这些部件如何工作、如何影响程序的准确性和性能是阅读此书的目标。</p>
+<h3 id="Example1–-Hello-c"><a href="#Example1–-Hello-c" class="headerlink" title="Example1–&gt;Hello.c"></a>Example1–&gt;Hello.c</h3><p>hello程序从一个源程序（或者源文件）开始。它存储在磁盘中，由01写成。</p>
+<p><img src="/../pics/image-20240306221336900.png" alt="image-20240306221336900"></p>
+<p>这类可通过ascii码或其他编码转为明显可理解的字符文件为文本文件，其他文件为二进制文件。</p>
+<p>此hello.c可被编译器gcc编译为可执行文件。编译过程如下：</p>
+<ol>
+<li>预处理阶段：预处理器根据#开头的指令，修改原始的c文件。处理结果通常以.i为扩展名。</li>
+<li>编译阶段：将hello.i翻译为hello.s，包含一个汇编语言程序</li>
+<li>汇编阶段：汇编器将hello.s翻译成机器指令，并打包为可重定位目标程序的格式（01的二进制文件），保存为hello.o</li>
+<li>链接阶段：hello程序中因调用了printf这个标准库中的函数，而它独立存在于printf.o的文件中。链接器负责处理并入这些文件，最终得到一个可执行文件。该文件加载到内存中即可直接执行。</li>
+</ol>
+<h3 id="Question1–-编译系统如何运行"><a href="#Question1–-编译系统如何运行" class="headerlink" title="Question1–&gt;编译系统如何运行"></a>Question1–&gt;编译系统如何运行</h3><p>促使程序员学习编译系统如何工作的原因：</p>
+<ol>
+<li>优化程序性能。</li>
+<li>理解链接时出现的错误</li>
+<li>避免安全漏洞</li>
+</ol>
+<p>当hello被载入内存中时（’.&#x2F;hello’通过向shell键入此命令），它被执行直到程序结束或中断。中间的过程如下：</p>
+<p><img src="/../pics/image-20240306223223007.png" alt="image-20240306223223007"></p>
+<p>程序执行内容:shell将逐一读取字符到寄存器，再把它放到存储器中，直到键入回车，程序再执行一系列指令，最终输出hello world。</p>
+<p>读取字符时数据由接入usb的设备经总线到达cpu中接受数据处理，再存入主存中。</p>
+<p>输出字符时，先前的数据被从主存中直接取出，经总线直达输出设备。</p>
+<p>读取磁盘数据时，可从磁盘控制器直达主存。</p>
+<hr>
+
+<p>该实例使我们了解到，系统花费了大量的时间等来将数据挪来挪去。设计系统的主要目标之一就是使这些拷贝操作尽可能快。解决方案之一就是更小更快的存储设备——高速缓存存储器。理解了它的机理可做到极大提高程序的性能。</p>
+<p><img src="/../pics/image-20240306224648286.png" alt="image-20240306224648286"></p>
+<p>同时此案例也使我们明白，程序无法直接访问键盘、显示器等设备接口，只能依赖操作系统。或者说，程序的所有对硬件操作的尝试都必须通过操作系统。</p>
+<p>操作系统有两个基本功能：<strong>防止硬件被失控的应用程序滥用，以及在控制复杂又通常广泛不同的低级设备方面，为应用程序提供简单一致的方法。</strong></p>
+<h3 id="Question2–-进程机制"><a href="#Question2–-进程机制" class="headerlink" title="Question2–&gt;进程机制"></a>Question2–&gt;进程机制</h3><p>同时运行许多进程（并发运行）的机制为<em>上下文切换</em> 。</p>
+<p>系统保存进程运行所需的所有状态的信息，如寄存器的值、主存内容等，称为上下文。任意时刻系统都只能运行一个进程，但当系统决定从当前进程转移控制权到某个进程时，就发生了上下文切换。</p>
+<p><img src="/../pics/image-20240306231154794.png" alt="image-20240306231154794"></p>
+<p>程序的交错执行会打乱人们眼中的时间概念，因此获取准确测量值也需要特殊的技术。</p>
+<p>进程由可以由多个称为线程的执行单元组成，运行在上下文中共享代码和全局数据。</p>
+<h2 id="Chapter2-信息的表示和处理"><a href="#Chapter2-信息的表示和处理" class="headerlink" title="Chapter2-&gt;信息的表示和处理"></a>Chapter2-&gt;信息的表示和处理</h2><p>（施工ing~</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://luvroc.github.io">luvroc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://luvroc.github.io/2024/03/06/csapp/">http://luvroc.github.io/2024/03/06/csapp/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://luvroc.github.io" target="_blank">uloveRock?</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/system/">system</a></div><div class="post_share"><div class="social-share" data-image="https://q1.qlogo.cn/g?b=qq&amp;nk=2316139590&amp;s=640" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/03/11/x86/" title="X86-&gt;1. 环境搭建"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">X86-&gt;1. 环境搭建</div></div></a></div><div class="next-post pull-right"><a href="/2024/03/01/Assemble/" title="8086汇编语言"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">8086汇编语言</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/03/11/x86/" title="X86-&gt;1. 环境搭建"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-11</div><div class="title">X86-&gt;1. 环境搭建</div></div></a></div><div><a href="/2024/03/14/x86second/" title="x86-&gt;2. 尝试做题+bochs虚拟机调试"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-14</div><div class="title">x86-&gt;2. 尝试做题+bochs虚拟机调试</div></div></a></div><div><a href="/2024/03/16/x86fifth/" title="x86-&gt;4. 中断和动态时钟显示"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-16</div><div class="title">x86-&gt;4. 中断和动态时钟显示</div></div></a></div><div><a href="/2024/03/16/x86third/" title="x86-&gt;3. 程序加载，访问硬盘和显卡"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-16</div><div class="title">x86-&gt;3. 程序加载，访问硬盘和显卡</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://q1.qlogo.cn/g?b=qq&amp;nk=2316139590&amp;s=640" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">luvroc</div><div class="author-info__description">dont look back in anger</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">zombieblock 有更新！（还有好多没更。。。）</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.</span> <span class="toc-text">理解计算机系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter1-FastRead"><span class="toc-number">1.1.</span> <span class="toc-text">Chapter1-&gt;FastRead</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Example1%E2%80%93-Hello-c"><span class="toc-number">1.1.1.</span> <span class="toc-text">Example1–&gt;Hello.c</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Question1%E2%80%93-%E7%BC%96%E8%AF%91%E7%B3%BB%E7%BB%9F%E5%A6%82%E4%BD%95%E8%BF%90%E8%A1%8C"><span class="toc-number">1.1.2.</span> <span class="toc-text">Question1–&gt;编译系统如何运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Question2%E2%80%93-%E8%BF%9B%E7%A8%8B%E6%9C%BA%E5%88%B6"><span class="toc-number">1.1.3.</span> <span class="toc-text">Question2–&gt;进程机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Chapter2-%E4%BF%A1%E6%81%AF%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E5%A4%84%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">Chapter2-&gt;信息的表示和处理</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/02/diary-2-broken-wings/" title="diary 2 &quot;broken wings&quot;">diary 2 &quot;broken wings&quot;</a><time datetime="2024-06-02T15:52:00.000Z" title="发表于 2024-06-02 23:52:00">2024-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/06/02/diary-1/" title="diary 1 &quot;Rememberance&quot;">diary 1 &quot;Rememberance&quot;</a><time datetime="2024-06-02T15:52:00.000Z" title="发表于 2024-06-02 23:52:00">2024-06-02</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/30/firstMd/" title="隐私计算">隐私计算</a><time datetime="2024-04-29T17:31:39.000Z" title="发表于 2024-04-30 01:31:39">2024-04-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/04/06/zombieBlock/" title="ZombieBlock">ZombieBlock</a><time datetime="2024-04-05T17:31:39.000Z" title="发表于 2024-04-06 01:31:39">2024-04-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/03/24/blockChain/" title="区块链到简单虚拟货币">区块链到简单虚拟货币</a><time datetime="2024-03-24T13:31:39.000Z" title="发表于 2024-03-24 21:31:39">2024-03-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By luvroc</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
