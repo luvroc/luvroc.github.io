@@ -1,0 +1,593 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Code With Topic | uloveRock?</title><meta name="author" content="luvroc"><meta name="copyright" content="luvroc"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="code with topicasync并发编程 - Rust 中的异步编程 — Concurrent programming - Asynchronous Programming in Rust  异步编程是一种并发，其高级目标与线程并发（同时做很多事情）相同，但实现方式不同。异步并发和线程并发之间的两大区别是，异步并发完全在程序中进行管理，无需 OS 的帮助，而多任务处理是协作的，而不是抢占式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Code With Topic">
+<meta property="og:url" content="http://luvroc.github.io/2025/04/23/code%20with%20topic/">
+<meta property="og:site_name" content="uloveRock?">
+<meta property="og:description" content="code with topicasync并发编程 - Rust 中的异步编程 — Concurrent programming - Asynchronous Programming in Rust  异步编程是一种并发，其高级目标与线程并发（同时做很多事情）相同，但实现方式不同。异步并发和线程并发之间的两大区别是，异步并发完全在程序中进行管理，无需 OS 的帮助，而多任务处理是协作的，而不是抢占式">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://q1.qlogo.cn/g?b=qq&nk=2316139590&s=640">
+<meta property="article:published_time" content="2025-04-23T04:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-23T12:35:22.829Z">
+<meta property="article:author" content="luvroc">
+<meta property="article:tag" content="mess">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://q1.qlogo.cn/g?b=qq&nk=2316139590&s=640"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://luvroc.github.io/2025/04/23/code%20with%20topic/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Code With Topic',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-04-23 20:35:22'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://q1.qlogo.cn/g?b=qq&amp;nk=2316139590&amp;s=640" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="uloveRock?"><span class="site-name">uloveRock?</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Code With Topic</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-04-23T04:00:00.000Z" title="发表于 2025-04-23 12:00:00">2025-04-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-04-23T12:35:22.829Z" title="更新于 2025-04-23 20:35:22">2025-04-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/mess/">mess</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Code With Topic"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h3 id="code-with-topic"><a href="#code-with-topic" class="headerlink" title="code with topic"></a>code with topic</h3><h4 id="async"><a href="#async" class="headerlink" title="async"></a>async</h4><p><a target="_blank" rel="noopener" href="https://rust-lang.github.io/async-book/part-guide/concurrency.html#concurrency-and-parallelism">并发编程 - Rust 中的异步编程 — Concurrent programming - Asynchronous Programming in Rust</a></p>
+<blockquote>
+<p>异步编程是一种并发，其高级目标与线程并发（同时做很多事情）相同，但实现方式不同。异步并发和线程并发之间的两大区别是，异步并发完全在程序中进行管理，无需 OS 的帮助，而多任务处理是协作的，而不是抢占式。</p>
+</blockquote>
+<p>并发concurrency：多个任务在一个时间段执行（排序），针对单个cpu，由软件支持（时间片、调度）</p>
+<p>并行parallelism：多个任务同时执行，需要多核同时执行多个任务。</p>
+<p>并发是组织代码的一种方式，而并行是一种资源。</p>
+<blockquote>
+<p>In threaded systems, each concurrent thread is executed in parallel using as much parallelism as possible. In async systems, there is no strong default: a system may run all tasks in a single thread, it may assign multiple tasks to a single thread and lock that thread to a core (so groups of tasks execute in parallel, but within a group each task executes concurrently, but never in parallel with other tasks within the group), or tasks may be run in parallel with or without limits.</p>
+<p>在线程系统中，每个并发线程都使用尽可能多的并行性并行执行。在异步系统中，没有强默认值：系统可以在单个线程中运行所有任务，可以将多个任务分配给单个线程并将该线程锁定到内核（因此任务组并行执行，但在组内每个任务同时执行，但绝不与组内的其他任务并行执行）， 或者任务可以并行运行，有限制或没有限制。</p>
+</blockquote>
+<h5 id="async-await"><a href="#async-await" class="headerlink" title="async await"></a>async await</h5><p>术语：</p>
+<ol>
+<li>reactor、event loop、driver：管理IO和计时器事件，并与IO交互</li>
+<li>scheduler</li>
+<li>executor、runtime：结合上面两者，用于运行异步任务，提供api</li>
+<li>future：rust中延迟计算的任务，异步并发的基本单位。关于 Rust 中 futures 的一个重要直觉是它们是惰性对象。要完成任何工作，它们必须由外力（通常是异步运行时）向前驱动。</li>
+</ol>
+<p>async：Returns a [<code>Future</code>] instead of blocking the current thread.</p>
+<p>await：Suspend execution until the result of a [<code>Future</code>] is ready.</p>
+<p>future可以组合成更大的future，async可定义future，await可组合</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> tokio::&#123;spawn, time::&#123;sleep, Duration&#125;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">spawn</span>(<span class="title function_ invoke__">say_hello</span>());</span><br><span class="line">    <span class="title function_ invoke__">spawn</span>(<span class="title function_ invoke__">say_world</span>());</span><br><span class="line">    <span class="comment">// Wait for a while to give the tasks time to run.</span></span><br><span class="line">    <span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">1000</span>)).<span class="keyword">await</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">say_hello</span>() &#123;</span><br><span class="line">    <span class="comment">// Wait for a while before printing to make it a more interesting race.</span></span><br><span class="line">    <span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">100</span>)).<span class="keyword">await</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">say_world</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">sleep</span>(Duration::<span class="title function_ invoke__">from_millis</span>(<span class="number">100</span>)).<span class="keyword">await</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;world!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子里hello和world的执行顺序是随机的。spawn将一个future转化为tokio任务执行，做到任务之间的并发</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">handle1</span> = <span class="title function_ invoke__">spawn</span>(<span class="title function_ invoke__">say_hello</span>());</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">handle2</span> = <span class="title function_ invoke__">spawn</span>(<span class="title function_ invoke__">say_world</span>());</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">let</span> <span class="variable">_</span> = handle1.<span class="keyword">await</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">_</span> = handle2.<span class="keyword">await</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;!&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>代码与上次类似，但我们不是只调用 <code>spawn</code>，而是保存返回的 <code>JoinHandle</code> 并<code>稍后等待</code>它们。由于我们在退出 <code>main</code> 函数之前等待这些任务完成，因此我们不再需要 <code>main</code> 中的<code>休眠 </code>。</p>
+<p><code>await JoinHandle</code> 会返回一个 <code>Result</code>（这就是为什么我们在上面的例子中使用 <code>let _ = ...</code>，它避免了关于未使用的 <code>Result</code> 的警告）。如果生成的任务成功完成，则任务的结果将采用 <code>Ok</code> 变体。如果任务 panic 或被中止，则结果将是一个包含 <a target="_blank" rel="noopener" href="https://docs.rs/tokio/latest/tokio/task/struct.JoinError.html"><code>JoinError</code> 文档</a>的 <code>Err</code>。如果你没有在项目中通过 <code>abort</code> 使用 cancel，那么<code>解包 ``JoinHandle.await</code> 的结果是一种合理的方法，因为这实际上是将恐慌从被生成的任务传播到生成者。</p>
+<h5 id="cancellation"><a href="#cancellation" class="headerlink" title="cancellation"></a>cancellation</h5><p>如果要取消一个future：</p>
+<blockquote>
+<ol>
+<li>放弃它</li>
+<li>abort中止它</li>
+<li>通过cancellation</li>
+<li>通过函数或宏隐式取消</li>
+</ol>
+</blockquote>
+<p>后果：从编写异步代码（在异步函数、块、futures 等中）的角度来看，代码可能会在任何 <code>await</code> 处停止执行（包括宏中的隐藏代码），并且永远不会再次启动。为了使您的代码正确（特别是要<em>确保取消），</em> 无论它是否正常完成，或者是否在任何等待点终止，它都必须正常工作。</p>
+<h5 id="block-of-async"><a href="#block-of-async" class="headerlink" title="block of async"></a>block of async</h5><figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">//声明</span></span><br><span class="line"><span class="keyword">async</span> &#123;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">s1</span> = &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = <span class="number">42</span>;</span><br><span class="line">    <span class="built_in">format!</span>(<span class="string">&quot;The answer is &#123;a&#125;&quot;</span>)</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">s2</span> = <span class="keyword">async</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">q</span> = <span class="title function_ invoke__">question</span>().<span class="keyword">await</span>;</span><br><span class="line">    <span class="built_in">format!</span>(<span class="string">&quot;The question is &#123;q&#125;&quot;</span>)</span><br><span class="line">&#125;;</span><br><span class="line">s2.<span class="keyword">await</span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="demo"><a href="#demo" class="headerlink" title="demo"></a>demo</h5><p><a target="_blank" rel="noopener" href="https://www.rustedu.com/libp2p-slides/async-demo1.html">Demo 1 - 动手学 rust-libp2p</a></p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="comment">// main.c</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> futures::executor::block_on;</span><br><span class="line"><span class="comment">//类似.await</span></span><br><span class="line"><span class="comment">// use async_std::task::&#123;sleep&#125;;</span></span><br><span class="line"><span class="comment">// use std::time::Duration;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Buff</span> &#123;</span><br><span class="line">    data: <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">rx_socket</span>() <span class="punctuation">-&gt;</span> Buff &#123;</span><br><span class="line">    <span class="comment">// sleep(Duration::from_secs(2)).await;</span></span><br><span class="line">    Buff &#123;</span><br><span class="line">        data: <span class="built_in">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>],</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">rx_log</span>(buff: Buff) &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;socket 接收：&#123;:?&#125;&quot;</span>, buff.data);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">socket_log</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">buff</span> = <span class="title function_ invoke__">rx_socket</span>().<span class="keyword">await</span>;</span><br><span class="line">    <span class="title function_ invoke__">rx_log</span>(buff).<span class="keyword">await</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">tx_serial</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">buf</span> = Buff &#123;</span><br><span class="line">        data: <span class="built_in">vec!</span>[<span class="number">11</span>, <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>],</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;serial 发送：&#123;:?&#125;&quot;</span>, buf.data);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">async_main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">f1</span> = <span class="title function_ invoke__">socket_log</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">f2</span> = <span class="title function_ invoke__">tx_serial</span>();</span><br><span class="line"></span><br><span class="line">    futures::join!(f1, f2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">block_on</span>(<span class="title function_ invoke__">async_main</span>());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>future：一个将来会执行并获得结果的变量，调用poll可以获取结果（如果没到可获取时间，则用轮询获取）</p>
+<p>waker：一个轮询中使用的信号量，当轮询到future时，waker作为参数之一传给poll，从而获得future的值</p>
+<p>executor：用于管理一批future。单个future用<code>.await</code>驱动，执行器会对所有的future首先poll一次，之后等待wake再去第二次poll</p>
+<p><code>join!</code>:并发的executor若其中一个阻塞，则执行其它的，当全部阻塞时，当前函数会阻塞，让将线程的所有权让给执行器所在的函数（线程）。</p>
+<p><code>select!</code>:任意furure完成就退出。</p>
+<p>future对数据的访问：</p>
+<p>如果future访问的数据会变化或销毁，那么会有内存错误。为此需要Pin住数据（需要数据实现UnPin，通常会默认实现）</p>
+<h4 id="p2p-network"><a href="#p2p-network" class="headerlink" title="p2p network"></a>p2p network</h4><h5 id="concept"><a href="#concept" class="headerlink" title="concept"></a>concept</h5><blockquote>
+<p>libp2p, (short for “library peer-to-peer”) is a peer-to-peer (P2P) networking framework that enables the development of P2P applications. It consists of a collection of protocols, specifications, and libraries that facilitate P2P communication between network participants, known as “<a target="_blank" rel="noopener" href="https://docs.libp2p.io/concepts/fundamentals/peers/">peers</a>.”</p>
+</blockquote>
+<p>libp2p 旨在解决传统 P2P 网络方法和这些现有网络模型的局限性，目标是实现分布式 Web。</p>
+<p>why libp2p:</p>
+<ol>
+<li>模块化</li>
+<li>广泛的传输配置</li>
+<li>多功能</li>
+<li>安全</li>
+<li>健壮</li>
+<li>弹性</li>
+<li>效率</li>
+<li>穿透NAT</li>
+<li>消息分发和传播</li>
+<li>去中心化</li>
+</ol>
+<p>项目：</p>
+<ol>
+<li>IPFS+FileCoin</li>
+<li>Ethereum</li>
+<li>polkadot</li>
+<li>lighthouse</li>
+</ol>
+<p>很多：<a target="_blank" rel="noopener" href="https://docs.libp2p.io/concepts/introduction/users/">谁在使用 libp2p - libp2p — Who uses libp2p - libp2p</a></p>
+<h5 id="addressing"><a href="#addressing" class="headerlink" title="addressing"></a>addressing</h5><p>使用multiaddress作为多种寻址方案的统一约定。</p>
+<p>例如：<code>/ip4/192.0.2.0/udp/1234</code> 对两种协议及其基本寻址信息进行编码。<code>/ip4/192.0.2.0</code> 告诉我们需要 IPv4 协议的 <code>192.0.2.0</code> 环回地址，<code>/udp/1234</code> 告诉我们要向端口 <code>1234</code> 发送 UDP 数据包。</p>
+<p>multiaddr <code>/p2p/QmYyQSo1c1Ym7orWxLYvCrM2EmxFTANf8wXmmE7DWjhx5N</code> 使用 libp2p 的<a target="_blank" rel="noopener" href="https://github.com/multiformats/multiaddr/blob/master/protocols.csv">注册协议 id</a><code>/p2p/</code> 和我的 IPFS 节点公钥的 <a target="_blank" rel="noopener" href="https://docs.libp2p.io/concepts/appendix/glossary/#multihash">multihash</a> 来唯一标识我的本地 IPFS 节点。</p>
+<p>基于以上的信息，组合multiaddr：</p>
+<blockquote>
+<p>&#x2F;ip4&#x2F;198.51.100.0&#x2F;tcp&#x2F;4242&#x2F;p2p&#x2F;QmYyQSo1c1Ym7orWxLYvCrM2EmxFTANf8wXmmE7DWjhx5N</p>
+<p>假设我有上述对等 ID <code>QmYyQSo1c1Ym7orWxLYvCrM2EmxFTANf8wXmmE7DWjhx5N</code> ，我的公网 IP 是 <code>198.51.100.0</code>。我启动我的 libp2p 应用程序并侦听 TCP 端口 <code>4242</code> 上的连接</p>
+<p>这可以扩展为考虑多层寻址和抽象。例如，<a target="_blank" rel="noopener" href="https://docs.libp2p.io/concepts/nat/circuit-relay/#relay-addresses"> 用于电路中继的地址</a>将传输地址与多个对等体身份组合在一起，以形成描述“中继电路”的地址：</p>
+<p>&#x2F;ip4&#x2F;198.51.100.0&#x2F;tcp&#x2F;4242&#x2F;p2p&#x2F;QmRelay&#x2F;p2p-circuit&#x2F;p2p&#x2F;QmRelayedPeer</p>
+</blockquote>
+<h5 id="protocol"><a href="#protocol" class="headerlink" title="protocol"></a>protocol</h5><p><code>/my-app/amazing-protocol/1.0.1</code>libp2p 协议具有唯一的字符串标识符，这些标识符在首次打开连接时用于<a target="_blank" rel="noopener" href="https://docs.libp2p.io/concepts/fundamentals/protocols/#protocol-negotiation">协议协商</a>过程。</p>
+<p>为了接受链接，libp2p应用程序通过接口（switch，swarm，golang的Host接口）使用ID。使用已注册的协议 ID 标记传入流时，将调用处理程序函数。</p>
+<h6 id="binary-streams"><a href="#binary-streams" class="headerlink" title="binary streams"></a>binary streams</h6><blockquote>
+<p>libp2p 协议所依据的 “媒介” 是具有以下属性的双向二进制流:</p>
+<ul>
+<li>Bidirectional, reliable delivery of binary data</li>
+</ul>
+<p> 双向、可靠地交付二进制数据</p>
+<ul>
+<li><p>Each side can read and write from the stream at any time<br>每一端都可以随时从流中读取和写入</p>
+</li>
+<li><p>Data is read in the same order as it was written<br>数据读取顺序与写入数据的顺序相同</p>
+</li>
+<li><p>Can be “half-closed”, that is, closed for writing and open for reading, or closed for reading and open for writing<br>可以是“半闭”，即闭写开读，或闭读开写</p>
+</li>
+<li><p>Supports backpressure</p>
+<p>支持背压</p>
+</li>
+<li><p>Readers can’t be flooded by eager writers<br>读者不能被热心的作家淹没</p>
+</li>
+</ul>
+</blockquote>
+<p>同时保证流的安全和多路复用。</p>
+<h6 id="protocol-negotiation"><a href="#protocol-negotiation" class="headerlink" title="protocol negotiation"></a>protocol negotiation</h6><p>对流和链接使用的协议达成一致的过程。拨出新的流时，libp2p将发送协议ID，另一端处理ID，ID的协议不被支持时将结束流，支持则侦听对等体将回显协议 ID，作为未来通过流发送的数据将使用商定的协议语义的信号。</p>
+<h6 id="match-protocol-ID-and-version"><a href="#match-protocol-ID-and-version" class="headerlink" title="match protocol ID and version"></a>match protocol ID and version</h6><p>两种。一种传入协议 ID 和处理程序函数。如果传入流请求发送与协议 ID 完全匹配，则将使用新流作为参数调用处理程序函数，另一种采用三个参数：协议 ID、协议匹配函数和处理程序函数。</p>
+<h6 id="Core-protocol"><a href="#Core-protocol" class="headerlink" title="Core protocol"></a>Core protocol</h6><p>使用protobuf定义消息架构，在二进制消息有效负载前加一个整数，该整数表示有效负载的长度（以字节为单位）。长度编码为 <a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/encoding#varints">protobuf varint</a> （可变长度整数）。</p>
+<ol>
+<li>ping：&#x2F;ipfs&#x2F;ping&#x2F;1.0.0</li>
+<li>identify：&#x2F;ipfs&#x2F;id&#x2F;1.0.0</li>
+<li>identify&#x2F;push：&#x2F;ipfs&#x2F;id&#x2F;push&#x2F;1.0.0</li>
+<li>kad-dht：基于kademlia路由算法的分布式哈希表</li>
+<li>circuit relay：&#x2F;libp2p&#x2F;circuit&#x2F;relay&#x2F;0.1.0</li>
+</ol>
+<h5 id="QUIC"><a href="#QUIC" class="headerlink" title="QUIC"></a>QUIC</h5><p>QUIC 是一种新的传输协议，它提供始终加密的流多路复用 建立在 UDP 之上的连接.</p>
+<p><img src="/../pics/http3-1744634828914-5.png" alt="HTTP/2 &amp; HTTP/3 OSI model"></p>
+<p>它作为加密层参与http3协议，用udp作为传输层协议实现了单次RTT和多个流，从而不需要multiplexing</p>
+<p>对比TCP：</p>
+<ol>
+<li>HoL阻塞：tcp在阻塞后，之后交付的数据包需要在内核缓冲区中等待，直到收到丢失数据包的重新传输。<br>QUIC则只会阻塞一个流</li>
+<li>僵化Ossification：由于 TCP 数据包的 header 没有加密，中间设备可以检查和修改 TCP header 字段，当遇到不理解的内容时可能会意外中断。这使得几乎不可能对 TCP 协议部署任何更改线路格式的更改。<br>QUIC尽可能加密，从而避免僵化</li>
+<li>握手：TCP需要两个RTT，一次验证客户端地址，另一次启动加密握手。<br>QUIC减少新连接建立到单个 RTT 的延迟，并允许为恢复的连接发送 0 RTT 应用程序数据。</li>
+</ol>
+<h6 id="in-p2p"><a href="#in-p2p" class="headerlink" title="in p2p"></a>in p2p</h6><p>libp2p 仅支持双向流，默认使用 TLS 1.3。由于 QUIC 已经提供了加密的流多路复用连接，因此 libp2p 直接使用 QUIC 流，无需任何其他帧。遵循多地址格式，标准 QUIC 连接将如下所示： <code>/ip4/192.0.2.0/udp/65432/quic-v1/</code> 。</p>
+<h5 id="Stream"><a href="#Stream" class="headerlink" title="Stream"></a>Stream</h5><p>流是计算机网络中一种<strong>有序、可靠的双向数据传输通道</strong>。它提供端到端的逻辑连接，确保数据按发送顺序到达接收方。</p>
+<p>应用：</p>
+<table>
+<thead>
+<tr>
+<th align="left">协议层</th>
+<th align="left">实现形式</th>
+<th align="left">特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>TCP</strong></td>
+<td align="left">字节流（Byte Stream）</td>
+<td align="left">无消息边界，需应用层处理分包</td>
+</tr>
+<tr>
+<td align="left"><strong>HTTP&#x2F;2</strong></td>
+<td align="left">逻辑消息流（Message Stream）</td>
+<td align="left">在单个TCP连接上多路复用多个请求</td>
+</tr>
+<tr>
+<td align="left"><strong>QUIC</strong></td>
+<td align="left">独立流（Isolated Stream）</td>
+<td align="left">每个流独立处理，避免队头阻塞</td>
+</tr>
+</tbody></table>
+<h6 id="multiplexing"><a href="#multiplexing" class="headerlink" title="multiplexing"></a>multiplexing</h6><p>多路复用是<strong>在单一物理连接上同时传输多个独立数据流</strong>的技术，其核心价值在于：</p>
+<ul>
+<li><strong>提升连接利用率</strong>：避免频繁建立&#x2F;断开连接的开销；</li>
+<li><strong>降低延迟</strong>：并行处理多个数据交互；</li>
+<li><strong>资源高效</strong>：减少端口和内存占用。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">原理</th>
+<th align="left">典型协议</th>
+<th align="left">优缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>端口复用</strong></td>
+<td align="left">通过不同端口区分服务</td>
+<td align="left">HTTP&#x2F;1.1</td>
+<td align="left">简单但扩展性差</td>
+</tr>
+<tr>
+<td align="left"><strong>帧标识复用</strong></td>
+<td align="left">为每个流分配唯一ID标识</td>
+<td align="left">HTTP&#x2F;2, QUIC</td>
+<td align="left">高效但需复杂状态管理</td>
+</tr>
+<tr>
+<td align="left"><strong>信道化复用</strong></td>
+<td align="left">物理划分时隙&#x2F;频段</td>
+<td align="left">传统电话网络</td>
+<td align="left">资源固定分配，利用率低</td>
+</tr>
+</tbody></table>
+<p>协议中的多路复用</p>
+<table>
+<thead>
+<tr>
+<th align="left">协议</th>
+<th align="left">多路复用创新</th>
+<th align="left">性能提升指标</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>HTTP&#x2F;3</strong></td>
+<td align="left">基于QUIC的流多路复用</td>
+<td align="left">页面加载时间↓35%</td>
+</tr>
+<tr>
+<td align="left"><strong>gRPC</strong></td>
+<td align="left">利用HTTP&#x2F;2流实现RPC调用复用</td>
+<td align="left">QPS↑4倍</td>
+</tr>
+<tr>
+<td align="left"><strong>WebTransport</strong></td>
+<td align="left">基于UDP的流式传输</td>
+<td align="left">延迟↓50%</td>
+</tr>
+</tbody></table>
+<ul>
+<li><strong>实时视频会议</strong> → 优先选择QUIC协议，利用独立流避免卡顿</li>
+<li><strong>微服务通信</strong> → 采用gRPC的HTTP&#x2F;2流复用提升吞吐量</li>
+<li><strong>IoT设备管理</strong> → 使用CoAP的块传输实现低功耗多路复用</li>
+</ul>
+<h5 id="Project"><a href="#Project" class="headerlink" title="Project"></a>Project</h5><h6 id="protocol-floodsub"><a href="#protocol-floodsub" class="headerlink" title="protocol&#x2F;floodsub"></a>protocol&#x2F;floodsub</h6><p><code>Floodsub</code> 基本逻辑就是<strong>订阅消息</strong>、<strong>发送消息</strong>与<strong>传递消息</strong>。每一个节点在收到消息后，都会对连接的全部节点进行发送消息，“一传十，十传百”，真的就是字面上的意思，所以会造成大量的重复发送，是一种以带宽换取传播速度的方式，适合小型网络。</p>
+<ol>
+<li><p>event</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Behaviour</span> &#123;</span><br><span class="line">    <span class="comment">/// Events that need to be yielded to the outside when polling.</span></span><br><span class="line">    events: VecDeque&lt;ToSwarm&lt;Event, FloodsubRpc&gt;&gt;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">///...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>包装了Toswarm的类型，而ToSwarm有以下的内容</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">ToSwarm</span>&lt;TOutEvent, TInEvent&gt; &#123;</span><br><span class="line">    <span class="comment">/// Instructs the `Swarm` to return an event when it is being polled.</span></span><br><span class="line">    <span class="title function_ invoke__">GenerateEvent</span>(TOutEvent),</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    Dial &#123; opts: DialOpts &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Instructs the [`Swarm`](crate::Swarm) to listen on the provided address.</span></span><br><span class="line">    ListenOn &#123; opts: ListenOpts &#125;,</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Instructs the [`Swarm`](crate::Swarm) to remove the listener.</span></span><br><span class="line">    RemoveListener &#123; id: ListenerId &#125;,</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    NotifyHandler &#123;</span><br><span class="line">        <span class="comment">/// The peer for whom a [`ConnectionHandler`] should be notified.</span></span><br><span class="line">        peer_id: PeerId,</span><br><span class="line">        <span class="comment">/// The options w.r.t. which connection handler to notify of the event.</span></span><br><span class="line">        handler: NotifyHandler,</span><br><span class="line">        <span class="comment">/// The event to send.</span></span><br><span class="line">        event: TInEvent,</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="title function_ invoke__">NewExternalAddrCandidate</span>(Multiaddr),</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="title function_ invoke__">ExternalAddrConfirmed</span>(Multiaddr),</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="title function_ invoke__">ExternalAddrExpired</span>(Multiaddr),</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    CloseConnection &#123;</span><br><span class="line">        <span class="comment">/// The peer to disconnect.</span></span><br><span class="line">        peer_id: PeerId,</span><br><span class="line">        <span class="comment">/// Whether to close a specific or all connections to the given peer.</span></span><br><span class="line">        connection: CloseConnection,</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    NewExternalAddrOfPeer &#123; peer_id: PeerId, address: Multiaddr &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可见event几乎涵盖了节点的功能相关的枚举类型，layer中的很多方法实现的就是将方法对应的事件塞入events队列的尾部。</p>
+<p>应当执行event时则会调用poll函数（见异步编程的future部分）</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="meta">#[tracing::instrument(level = <span class="string">&quot;trace&quot;</span>, name = <span class="string">&quot;NetworkBehaviour::poll&quot;</span>, skip(self))]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">poll</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, _: &amp;<span class="keyword">mut</span> Context&lt;<span class="symbol">&#x27;_</span>&gt;) <span class="punctuation">-&gt;</span> Poll&lt;ToSwarm&lt;<span class="keyword">Self</span>::ToSwarm, THandlerInEvent&lt;<span class="keyword">Self</span>&gt;&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(event) = <span class="keyword">self</span>.events.<span class="title function_ invoke__">pop_front</span>() &#123;</span><br><span class="line">        <span class="keyword">return</span> Poll::<span class="title function_ invoke__">Ready</span>(event);</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    Poll::Pending</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>关注</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">subscribe</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, topic: Topic) <span class="punctuation">-&gt;</span> <span class="type">bool</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.subscribed_topics.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">any</span>(|t| t.<span class="title function_ invoke__">id</span>() == topic.<span class="title function_ invoke__">id</span>()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">peer</span> <span class="keyword">in</span> <span class="keyword">self</span>.connected_peers.<span class="title function_ invoke__">keys</span>() &#123;</span><br><span class="line">            <span class="keyword">self</span>.events.<span class="title function_ invoke__">push_back</span>(ToSwarm::NotifyHandler &#123;</span><br><span class="line">                peer_id: *peer,</span><br><span class="line">                handler: NotifyHandler::Any,</span><br><span class="line">                event: FloodsubRpc &#123;</span><br><span class="line">                    messages: <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>(),</span><br><span class="line">                    subscriptions: <span class="built_in">vec!</span>[FloodsubSubscription &#123;</span><br><span class="line">                        topic: topic.<span class="title function_ invoke__">clone</span>(),</span><br><span class="line">                        action: FloodsubSubscriptionAction::Subscribe,</span><br><span class="line">                    &#125;],</span><br><span class="line">                &#125;,</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.subscribed_topics.<span class="title function_ invoke__">push</span>(topic);</span><br><span class="line">        <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Unsubscribes from a topic.</span></span><br><span class="line">    <span class="comment">///</span></span><br><span class="line">    <span class="comment">/// Note that this only requires the topic name.</span></span><br><span class="line">    <span class="comment">///</span></span><br><span class="line">    <span class="comment">/// Returns true if we were subscribed to this topic.</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">unsubscribe</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, topic: Topic) <span class="punctuation">-&gt;</span> <span class="type">bool</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">Some</span>(pos) = <span class="keyword">self</span>.subscribed_topics.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">position</span>(|t| *t == topic) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.subscribed_topics.<span class="title function_ invoke__">remove</span>(pos);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> <span class="variable">peer</span> <span class="keyword">in</span> <span class="keyword">self</span>.connected_peers.<span class="title function_ invoke__">keys</span>() &#123;</span><br><span class="line">            <span class="keyword">self</span>.events.<span class="title function_ invoke__">push_back</span>(ToSwarm::NotifyHandler &#123;</span><br><span class="line">                peer_id: *peer,</span><br><span class="line">                handler: NotifyHandler::Any,</span><br><span class="line">                event: FloodsubRpc &#123;</span><br><span class="line">                    messages: <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>(),</span><br><span class="line">                    subscriptions: <span class="built_in">vec!</span>[FloodsubSubscription &#123;</span><br><span class="line">                        topic: topic.<span class="title function_ invoke__">clone</span>(),</span><br><span class="line">                        action: FloodsubSubscriptionAction::Unsubscribe,</span><br><span class="line">                    &#125;],</span><br><span class="line">                &#125;,</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="literal">true</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>解释：</p>
+<ul>
+<li>handler:NotifyHandler::Any   :: floodsub 只需要将消息传递给对等节点一次，而不需要通过所有连接都发送相同的消息。Any不关心具体的连接节点，只关心消息是否传达到对等节点。</li>
+</ul>
+</li>
+</ol>
+<h6 id="chat"><a href="#chat" class="headerlink" title="chat"></a>chat</h6><p>参考了官方库的example</p>
+<p>里面使用了gossipsub，不同于floodsub适用于小型网络，它更适用于区块链和p2p聊天。</p>
+<blockquote>
+<p>Gossipsub 是一种基于 <strong>Gossip（流言）协议</strong> 的 <strong>发布&#x2F;订阅（PubSub）</strong> 消息传播机制，旨在高效、可靠地在 P2P 网络中广播消息。它结合了 <strong>Floodsub（泛洪协议）</strong> 的简单性和 <strong>Gossip 协议</strong> 的扩展性，同时优化了带宽使用和消息传播效率。</p>
+</blockquote>
+<ul>
+<li><strong>Mesh 网络（主题网格）</strong>：<ul>
+<li>每个主题（Topic）维护一个 <strong>Mesh</strong>，即一组稳定连接的节点（Peer），用于高效传播消息。</li>
+<li>Mesh 的大小受 <code>D</code>（期望连接数）参数控制，避免过度连接或孤立节点。</li>
+</ul>
+</li>
+<li><strong>Fanout 机制（非订阅发布）</strong>：<ul>
+<li>允许节点向未订阅的主题发送消息（如临时广播），并记录目标节点，避免全网络泛洪。</li>
+</ul>
+</li>
+<li><strong>Control Messages（控制消息）</strong>：<ul>
+<li><strong>IHAVE&#x2F;IWANT</strong>：用于请求&#x2F;提供缺失的消息（类似 BitTorrent 的块交换）。</li>
+<li><strong>GRAFT&#x2F;PRUNE</strong>：动态调整 Mesh 成员（加入或剔除节点）。</li>
+</ul>
+</li>
+<li><strong>消息缓存（Message Cache）</strong>：<ul>
+<li>记录最近的消息 ID，防止重复传播，并支持按需拉取（IWANT 机制）。</li>
+</ul>
+</li>
+</ul>
+<p>topic作为聊天室的范围，聊天节点可以随时加入或离开，IHAVE&#x2F;IWANT 机制确保即使部分节点离线，消息仍可通过其他节点补全。</p>
+<p>上述的特点在这个publish函数中都能找到</p>
+<blockquote>
+<ol>
+<li><p><strong>数据转换</strong>：对原始数据进行可选的转换（如压缩）</p>
+</li>
+<li><p><strong>消息构建</strong>：根据发布配置（签名&#x2F;匿名&#x2F;随机作者）构建原始消息</p>
+</li>
+<li><p><strong>消息验证</strong>：检查消息大小和是否为重复消息</p>
+</li>
+<li><p>选择接收者</p>
+<p>：根据不同策略选择消息接收节点</p>
+<ul>
+<li>如果启用了洪泛发布 (<code>flood_publish</code>)，向所有订阅的高分节点发送</li>
+<li>如果是正常 Gossipsub 逻辑，则使用 mesh(有主题) 或 fanout（无主题，mesh中随机配凑fanout） 机制</li>
+</ul>
+</li>
+<li><p><strong>缓存消息</strong>：将消息保存在本地缓存中，用于处理重复消息</p>
+</li>
+<li><p><strong>发送消息</strong>：向所有选定的接收者发送消息</p>
+</li>
+</ol>
+</blockquote>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">publish</span>(</span><br><span class="line">    &amp;<span class="keyword">mut</span> <span class="keyword">self</span>,</span><br><span class="line">    topic: <span class="keyword">impl</span> <span class="title class_">Into</span>&lt;TopicHash&gt;,</span><br><span class="line">    data: <span class="keyword">impl</span> <span class="title class_">Into</span>&lt;<span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;&gt;,</span><br><span class="line">) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;MessageId, PublishError&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">data</span> = data.<span class="title function_ invoke__">into</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">topic</span> = topic.<span class="title function_ invoke__">into</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 对数据进行转换（例如压缩）</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">transformed_data</span> = <span class="keyword">self</span></span><br><span class="line">        .data_transform</span><br><span class="line">        .<span class="title function_ invoke__">outbound_transform</span>(&amp;topic, data.<span class="title function_ invoke__">clone</span>())?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构建原始消息</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">raw_message</span> = <span class="keyword">self</span>.<span class="title function_ invoke__">build_raw_message</span>(topic, transformed_data)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 基于原始数据（未转换的）计算消息ID</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">msg_id</span> = <span class="keyword">self</span>.config.<span class="title function_ invoke__">message_id</span>(&amp;Message &#123;</span><br><span class="line">        source: raw_message.source,</span><br><span class="line">        data, <span class="comment">// 使用未压缩形式</span></span><br><span class="line">        sequence_number: raw_message.sequence_number,</span><br><span class="line">        topic: raw_message.topic.<span class="title function_ invoke__">clone</span>(),</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查消息大小是否超过传输限制</span></span><br><span class="line">    <span class="keyword">if</span> raw_message.<span class="title function_ invoke__">raw_protobuf_len</span>() &gt; <span class="keyword">self</span>.config.<span class="title function_ invoke__">max_transmit_size</span>() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(PublishError::MessageTooLarge);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查消息是否已经发布过</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">self</span>.duplicate_cache.<span class="title function_ invoke__">contains</span>(&amp;msg_id) &#123;</span><br><span class="line">        tracing::warn!(</span><br><span class="line">            message=%msg_id,</span><br><span class="line">            <span class="string">&quot;Not publishing a message that has already been published&quot;</span></span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(PublishError::Duplicate);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 选择消息接收者</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">recipient_peers</span> = HashSet::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 获取所有订阅该主题的节点</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(set) = <span class="keyword">self</span>.topic_peers.<span class="title function_ invoke__">get</span>(&amp;topic_hash) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.config.<span class="title function_ invoke__">flood_publish</span>() &#123;</span><br><span class="line">            <span class="comment">// 如果启用了洪泛发布，则向所有符合条件的节点发送</span></span><br><span class="line">            recipient_peers.<span class="title function_ invoke__">extend</span>(set.<span class="title function_ invoke__">iter</span>().<span class="title function_ invoke__">filter</span>(|p| &#123;</span><br><span class="line">                <span class="keyword">self</span>.explicit_peers.<span class="title function_ invoke__">contains</span>(*p)</span><br><span class="line">                    || !<span class="keyword">self</span>.<span class="title function_ invoke__">score_below_threshold</span>(p, |ts| ts.publish_threshold).<span class="number">0</span></span><br><span class="line">            &#125;));</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 正常Gossipsub逻辑：根据mesh或fanout选择接收节点</span></span><br><span class="line">            <span class="keyword">match</span> <span class="keyword">self</span>.mesh.<span class="title function_ invoke__">get</span>(&amp;raw_message.topic) &#123;</span><br><span class="line">                <span class="comment">// 如果该主题在我们的mesh中，向mesh中的节点发送</span></span><br><span class="line">                <span class="title function_ invoke__">Some</span>(mesh_peers) =&gt; &#123;</span><br><span class="line">                    recipient_peers.<span class="title function_ invoke__">extend</span>(mesh_peers);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 否则，使用fanout机制</span></span><br><span class="line">                <span class="literal">None</span> =&gt; &#123;</span><br><span class="line">                    <span class="comment">// 如果已有fanout节点则使用，否则新建fanout列表</span></span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">self</span>.fanout.<span class="title function_ invoke__">contains_key</span>(&amp;topic_hash) &#123;</span><br><span class="line">                        <span class="keyword">for</span> <span class="variable">peer</span> <span class="keyword">in</span> <span class="keyword">self</span>.fanout.<span class="title function_ invoke__">get</span>(&amp;topic_hash).<span class="title function_ invoke__">expect</span>(<span class="string">&quot;Topic must exist&quot;</span>) &#123;</span><br><span class="line">                            recipient_peers.<span class="title function_ invoke__">insert</span>(*peer);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">// 随机选择mesh_n个节点作为fanout</span></span><br><span class="line">                        <span class="keyword">let</span> <span class="variable">mesh_n</span> = <span class="keyword">self</span>.config.<span class="title function_ invoke__">mesh_n</span>();</span><br><span class="line">                        <span class="keyword">let</span> <span class="variable">new_peers</span> = <span class="title function_ invoke__">get_random_peers</span>(...);</span><br><span class="line">                        </span><br><span class="line">                        <span class="keyword">self</span>.fanout.<span class="title function_ invoke__">insert</span>(topic_hash.<span class="title function_ invoke__">clone</span>(), new_peers.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">                        recipient_peers.<span class="title function_ invoke__">extend</span>(new_peers);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// 更新最近发布时间戳</span></span><br><span class="line">                    <span class="keyword">self</span>.fanout_last_pub.<span class="title function_ invoke__">insert</span>(topic_hash.<span class="title function_ invoke__">clone</span>(), Instant::<span class="title function_ invoke__">now</span>());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 添加显式对等节点（explicit peers）</span></span><br><span class="line">            <span class="comment">// 添加floodsub节点</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果没有接收者，返回错误</span></span><br><span class="line">    <span class="keyword">if</span> recipient_peers.<span class="title function_ invoke__">is_empty</span>() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">Err</span>(PublishError::InsufficientPeers);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将消息加入缓存</span></span><br><span class="line">    <span class="keyword">self</span>.duplicate_cache.<span class="title function_ invoke__">insert</span>(msg_id.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">    <span class="keyword">self</span>.mcache.<span class="title function_ invoke__">put</span>(&amp;msg_id, raw_message.<span class="title function_ invoke__">clone</span>());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理匿名消息的特殊情况</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">PublishConfig</span>::RandomAuthor | PublishConfig::Anonymous = <span class="keyword">self</span>.publish_config &#123;</span><br><span class="line">        <span class="keyword">if</span> !<span class="keyword">self</span>.config.<span class="title function_ invoke__">allow_self_origin</span>() &#123;</span><br><span class="line">            <span class="keyword">self</span>.published_message_ids.<span class="title function_ invoke__">insert</span>(msg_id.<span class="title function_ invoke__">clone</span>());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 向所有选定的节点发送消息</span></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">peer_id</span> <span class="keyword">in</span> recipient_peers.<span class="title function_ invoke__">iter</span>() &#123;</span><br><span class="line">        <span class="keyword">self</span>.<span class="title function_ invoke__">send_message</span>(*peer_id, RpcOut::<span class="title function_ invoke__">Publish</span>(raw_message.<span class="title function_ invoke__">clone</span>()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更新指标</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(metrics) = <span class="keyword">self</span>.metrics.<span class="title function_ invoke__">as_mut</span>() &#123;</span><br><span class="line">        metrics.<span class="title function_ invoke__">register_published_message</span>(&amp;topic_hash);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(msg_id)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构建chat的流程：</p>
+<ol>
+<li><p>配置swarm：tokio+tcp+quic+交互逻辑<br>交互逻辑使用with_behaviour配置：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line">.<span class="title function_ invoke__">with_behaviour</span>(|key| &#123;</span><br><span class="line">    <span class="comment">// 配置 gossipsub 消息 ID 生成函数</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">message_id_fn</span> = |message: &amp;gossipsub::Message| &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">s</span> = DefaultHasher::<span class="title function_ invoke__">new</span>();</span><br><span class="line">        message.data.<span class="title function_ invoke__">hash</span>(&amp;<span class="keyword">mut</span> s);</span><br><span class="line">        gossipsub::MessageId::<span class="title function_ invoke__">from</span>(s.<span class="title function_ invoke__">finish</span>().<span class="title function_ invoke__">to_string</span>())</span><br><span class="line">    &#125;; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 构建 gossipsub 配置</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">gossipsub_config</span> = gossipsub::ConfigBuilder::<span class="title function_ invoke__">default</span>()</span><br><span class="line">        .<span class="title function_ invoke__">heartbeat_interval</span>(Duration::<span class="title function_ invoke__">from_secs</span>(<span class="number">5</span>))</span><br><span class="line">        .<span class="title function_ invoke__">validation_mode</span>(gossipsub::ValidationMode::Permissive)</span><br><span class="line">        .<span class="title function_ invoke__">message_id_fn</span>(message_id_fn)</span><br><span class="line">        .<span class="title function_ invoke__">build</span>()</span><br><span class="line">        .<span class="title function_ invoke__">map_err</span>(io::Error::other)?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建 gossipsub 行为</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">gossipsub</span> = gossipsub::Behaviour::<span class="title function_ invoke__">new</span>(</span><br><span class="line">        gossipsub::MessageAuthenticity::<span class="title function_ invoke__">Signed</span>(key.<span class="title function_ invoke__">clone</span>()),</span><br><span class="line">        gossipsub_config,</span><br><span class="line">    )?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建 mdns 行为</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">mdns</span> = mdns::tokio::Behaviour::<span class="title function_ invoke__">new</span>(mdns::Config::<span class="title function_ invoke__">default</span>(), key.<span class="title function_ invoke__">public</span>().<span class="title function_ invoke__">to_peer_id</span>())?;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 返回你的自定义行为组合</span></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(MyBehaviour &#123;</span><br><span class="line">        gossipsub,</span><br><span class="line">        mdns,</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)?</span><br></pre></td></tr></table></figure>
+
+<p>其中mdns协议负责在本地网络自动发现其他节点，设置了gossipsub的消息ID生成函数和参数。最后返回的MyBehaviour由程序自定义，通过<code>#[derive(NetworkBehaviour)]</code>统一行为，在3中作为异步事件的参数</p>
+</li>
+<li><p>设置topic和stdin流</p>
+</li>
+<li><p>进入异步事件循环</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="built_in">select!</span> &#123;</span><br><span class="line">            <span class="title function_ invoke__">Ok</span>(<span class="title function_ invoke__">Some</span>(line)) = stdin.<span class="title function_ invoke__">next_line</span>() =&gt; &#123;</span><br><span class="line">                <span class="comment">// let message = gossipsub::Message &#123;</span></span><br><span class="line">                <span class="comment">//     data: line.as_bytes().to_vec(),</span></span><br><span class="line">                <span class="comment">//     sequence_number: None,</span></span><br><span class="line">                <span class="comment">//     topic: topic.clone().into(),</span></span><br><span class="line">                <span class="comment">//     source: None,</span></span><br><span class="line">                <span class="comment">// &#125;;</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Err</span>(e) = swarm</span><br><span class="line">                    .<span class="title function_ invoke__">behaviour_mut</span>().gossipsub</span><br><span class="line">                    .<span class="title function_ invoke__">publish</span>(topic.<span class="title function_ invoke__">clone</span>(), line.<span class="title function_ invoke__">as_bytes</span>()) &#123;</span><br><span class="line">                    <span class="built_in">println!</span>(<span class="string">&quot;Publish error: &#123;e:?&#125;&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            event = swarm.<span class="title function_ invoke__">select_next_some</span>() =&gt; <span class="keyword">match</span> event &#123;</span><br><span class="line">                SwarmEvent::<span class="title function_ invoke__">Behaviour</span>(MyBehaviourEvent::<span class="title function_ invoke__">Mdns</span>(mdns::Event::<span class="title function_ invoke__">Discovered</span>(list))) =&gt; &#123;</span><br><span class="line">                    <span class="keyword">for</span> (peer_id, _multiaddr) <span class="keyword">in</span> list &#123;</span><br><span class="line">                        <span class="built_in">println!</span>(<span class="string">&quot;mDNS discovered a new peer: &#123;peer_id&#125;&quot;</span>);</span><br><span class="line">                        swarm.<span class="title function_ invoke__">behaviour_mut</span>().gossipsub.<span class="title function_ invoke__">add_explicit_peer</span>(&amp;peer_id);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">let</span> <span class="variable">topic_peers_len</span> = swarm.<span class="title function_ invoke__">behaviour</span>().gossipsub.<span class="title function_ invoke__">all_peers</span>()</span><br><span class="line">                        .<span class="title function_ invoke__">count</span>();</span><br><span class="line">                    <span class="built_in">println!</span>(<span class="string">&quot;Connected peers for topic &#x27;chat&#x27;: &#123;&#125; peers&quot;</span>, topic_peers_len);</span><br><span class="line">                &#125;,</span><br><span class="line">                SwarmEvent::<span class="title function_ invoke__">Behaviour</span>(MyBehaviourEvent::<span class="title function_ invoke__">Mdns</span>(mdns::Event::<span class="title function_ invoke__">Expired</span>(list))) =&gt; &#123;</span><br><span class="line">                    <span class="keyword">for</span> (peer_id, _multiaddr) <span class="keyword">in</span> list &#123;</span><br><span class="line">                        <span class="built_in">println!</span>(<span class="string">&quot;mDNS discover peer has expired: &#123;peer_id&#125;&quot;</span>);</span><br><span class="line">                        swarm.<span class="title function_ invoke__">behaviour_mut</span>().gossipsub.<span class="title function_ invoke__">remove_explicit_peer</span>(&amp;peer_id);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                SwarmEvent::<span class="title function_ invoke__">Behaviour</span>(MyBehaviourEvent::<span class="title function_ invoke__">Gossipsub</span>(gossipsub::Event::Message &#123;</span><br><span class="line">                    propagation_source: peer_id,</span><br><span class="line">                    message_id: id,</span><br><span class="line">                    message,</span><br><span class="line">                &#125;)) =&gt; <span class="built_in">println!</span>(</span><br><span class="line">                        <span class="string">&quot;Got message: &#x27;&#123;&#125;&#x27; with id: &#123;id&#125; from peer: &#123;peer_id&#125;&quot;</span>,</span><br><span class="line">                        <span class="type">String</span>::<span class="title function_ invoke__">from_utf8_lossy</span>(&amp;message.data),</span><br><span class="line">                    ),</span><br><span class="line">                SwarmEvent::NewListenAddr &#123; address, .. &#125; =&gt; &#123;</span><br><span class="line">                    <span class="built_in">println!</span>(<span class="string">&quot;Local node is listening on &#123;address&#125;&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                _ =&gt; &#123;&#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>事件循环中的<code>stdin.next_line()</code>和<code>event = swarm.select_next_some()</code>具有异步属性，通过select宏统一执行。每次循环直到执行完其中一个后结束。网络事件主要有mdns的discover+expired和gossipsub的消息传输。</p>
+</li>
+</ol>
+<p>有个扩展作业，实现chat的私聊功能：</p>
+<p>deepseek给的实现方案如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>方案</strong></th>
+<th align="left">隐私性</th>
+<th align="left">实现难度</th>
+<th align="left">扩展性</th>
+<th align="left">适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">消息头标记法（@）</td>
+<td align="left">低</td>
+<td align="left">简单</td>
+<td align="left">高</td>
+<td align="left">快速原型开发</td>
+</tr>
+<tr>
+<td align="left">独立私聊 Topic</td>
+<td align="left">中</td>
+<td align="left">中等</td>
+<td align="left">中</td>
+<td align="left">中小规模固定群组</td>
+</tr>
+<tr>
+<td align="left">端到端加密（E2E）</td>
+<td align="left">高</td>
+<td align="left">复杂</td>
+<td align="left">高</td>
+<td align="left">高安全性需求</td>
+</tr>
+<tr>
+<td align="left">直接连接（Stream）</td>
+<td align="left">最高</td>
+<td align="left">最复杂</td>
+<td align="left">低</td>
+<td align="left">一对一实时通信</td>
+</tr>
+</tbody></table>
+<p>按我的直觉来说第一个方案实现的最差，可以被别人伪装，第三个方案像是我会做的。方案二意外的不错。</p>
+<p>优化后尝试把2和3结合：</p>
+<ul>
+<li><strong>强制订阅检查</strong>：发送私聊前，确认对方已订阅目标 Topic（可通过 <code>gossipsub.subscribed_peers(topic)</code> 检查）。</li>
+<li><strong>动态重试</strong>：如果对方未订阅，先发送控制消息（如 <code>&quot;@B请订阅 /chat/private/A-B&quot;</code>），再重发私聊消息。</li>
+<li><strong>限制私聊 Topic 数量</strong>：例如，每个 Peer 最多同时维护 10 个私聊 Topic，超时自动清理。</li>
+<li><strong>按需订阅</strong>：仅在需要通信时订阅 Topic，结束后取消订阅（<code>gossipsub.unsubscribe(topic)</code>）。</li>
+<li><strong>哈希化 Topic 名称</strong>：例如，用 <code>sha256(local_peer_id + remote_peer_id)</code> 生成不可预测的 Topic。</li>
+<li><strong>临时 Topic</strong>：每次会话生成随机 Topic，并通过安全通道（如方案 3 的 E2E 加密）通知对方。</li>
+</ul>
+<p>具体的代码实现可能得有空闲时间的时候来实现</p>
+<h4 id="Write-a-CLI"><a href="#Write-a-CLI" class="headerlink" title="Write a CLI"></a>Write a CLI</h4><p>非常好代码book，这一大节的参考：<a target="_blank" rel="noopener" href="https://cli.rust-lang.net.cn/book/index.html">入门 - Rust 中的命令行应用程序 - Rust CLI 中文</a></p>
+<p><code>clap = &#123;version = &quot;4.0&quot;, features = [&quot;derive&quot;]&#125;</code>以及以下代码</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> clap::Parser;</span><br><span class="line"><span class="meta">#[derive(Parser)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">CLI</span> &#123;</span><br><span class="line">    pattern: <span class="type">String</span>,</span><br><span class="line">    path: path::PathBuf,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//in fn main</span></span><br><span class="line"><span class="keyword">let</span> <span class="variable">args</span> = CLI::<span class="title function_ invoke__">parse</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Pattern: &#123;&#125;&quot;</span>, args.pattern);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Path: &#123;:?&#125;&quot;</span>, args.path);</span><br><span class="line"><span class="comment">//in terminal</span></span><br><span class="line">cargo run -- aa src/main.rs</span><br></pre></td></tr></table></figure>
+
+<p>执行之后会得到 aa Pattern和后面的Path输出</p>
+<h5 id="Error-handling"><a href="#Error-handling" class="headerlink" title="Error handling"></a>Error handling</h5><p>尝试用result + match语句来处理</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">my_async_result</span> =     </span><br><span class="line">    <span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">addr</span> = args.path.<span class="title function_ invoke__">to_str</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">content</span> = fs::<span class="title function_ invoke__">read_to_string</span>(addr);</span><br><span class="line">        <span class="keyword">match</span> content &#123;</span><br><span class="line">            <span class="title function_ invoke__">Ok</span>(content) =&gt; &#123;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot;File content: &#123;&#125;&quot;</span>, content);</span><br><span class="line">                <span class="keyword">return</span> content</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="title function_ invoke__">Err</span>(e) =&gt; &#123;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot;Error reading file: &#123;&#125;&quot;</span>, e);</span><br><span class="line">                <span class="keyword">return</span> <span class="type">String</span>::<span class="title function_ invoke__">new</span>()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;.<span class="keyword">await</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Async Result: &#123;&#125;&quot;</span>, my_async_result);</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br></pre></td></tr></table></figure>
+
+<p>现在，我们能够访问文件的内容，但在 <code>match</code> 块之后我们无法真正对它做任何事情。为此，我们需要以某种方式处理错误情况。挑战在于 <code>match</code> 块的所有分支都需要返回相同类型的某些内容。可以尝试unwrap（像addr一行）或者？<code>let content = std::fs::read_to_string(&quot;test.txt&quot;)?;</code></p>
+<p>当然，时间富裕的首选是自定义错误处理，其次使用更成熟的库。</p>
+<p>在anyhow库中：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> anyhow::&#123;Context, <span class="type">Result</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;()&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">path</span> = <span class="string">&quot;test.txt&quot;</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">content</span> = std::fs::<span class="title function_ invoke__">read_to_string</span>(path)</span><br><span class="line">        .<span class="title function_ invoke__">with_context</span>(|| <span class="built_in">format!</span>(<span class="string">&quot;could not read file `&#123;&#125;`&quot;</span>, path))?;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;file content: &#123;&#125;&quot;</span>, content);</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此修改上面的代码：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="meta">#[warn(unused_imports)]</span></span><br><span class="line"><span class="keyword">use</span> std::&#123;</span><br><span class="line">    path,</span><br><span class="line">    error::Error,</span><br><span class="line">    fs,</span><br><span class="line">    io::&#123;<span class="keyword">self</span>, Write&#125;,</span><br><span class="line">    env</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">use</span> anyhow::&#123;Context, <span class="type">Result</span>&#125;;</span><br><span class="line"><span class="keyword">use</span> clap::Parser;</span><br><span class="line"><span class="meta">#[derive(Parser)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">CLI</span> &#123;</span><br><span class="line">    pattern: <span class="type">String</span>,</span><br><span class="line">    path: path::PathBuf,</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#[warn(unused_imports)]</span></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), <span class="type">Box</span>&lt;<span class="keyword">dyn</span> Error&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">args</span> = CLI::<span class="title function_ invoke__">parse</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Pattern: &#123;&#125;&quot;</span>, args.pattern);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;Path: &#123;:?&#125;&quot;</span>, args.path);   </span><br><span class="line">    <span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">addr</span> = args.path.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">        <span class="keyword">return</span> fs::<span class="title function_ invoke__">read_to_string</span>(&amp;addr)</span><br><span class="line">            .<span class="title function_ invoke__">with_context</span>(|| <span class="built_in">format!</span>(<span class="string">&quot;Failed to read file: &#123;&#125;&quot;</span>, addr.<span class="title function_ invoke__">display</span>()))</span><br><span class="line">            .<span class="title function_ invoke__">map</span>(|content| &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">count</span> = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> <span class="variable">line</span> <span class="keyword">in</span> content.<span class="title function_ invoke__">lines</span>() &#123;</span><br><span class="line">                    <span class="keyword">if</span> line.<span class="title function_ invoke__">contains</span>(&amp;args.pattern) &#123;</span><br><span class="line">                        count += <span class="number">1</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="built_in">println!</span>(<span class="string">&quot;Pattern &#x27;&#123;&#125;&#x27; found &#123;&#125; times&quot;</span>, args.pattern, count);</span><br><span class="line">            &#125;)</span><br><span class="line">        </span><br><span class="line">    &#125;.<span class="keyword">await</span>?;</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Pattern: aa<br>Path: “src&#x2F;main”<br>Error: Failed to read file: src&#x2F;main</p>
+<p>Caused by:<br>    No such file or directory (os error 2)</p>
+</blockquote>
+<p>可以看见它保留了原始的错误和我们自定义的错误描述</p>
+<h5 id="pipe"><a href="#pipe" class="headerlink" title="pipe"></a>pipe</h5><blockquote>
+<p>应通过 <code>stderr</code> 打印错误，以便用户和其他工具更容易将输出管道传输到文件或更多工具。</p>
+<p><strong>注意：</strong>在大多数操作系统上，程序可以写入两个输出流，<code>stdout</code> 和 <code>stderr</code>。<code>stdout</code> 用于程序的实际输出，而 <code>stderr</code> 允许错误和其他消息与 <code>stdout</code> 分开。这样，输出可以存储到文件中或管道传输到另一个程序，而错误会显示给用户。</p>
+<p>在 Rust 中，这是通过 <code>println!</code> 和 <code>eprintln!</code> 实现的，前者打印到 <code>stdout</code>，后者打印到 <code>stderr</code>。</p>
+</blockquote>
+<p>如果有转义字符，避免他们改变用户的terminal输出。可以用<code>ansi_term</code>这种crate。</p>
+<h5 id="print-quickly"><a href="#print-quickly" class="headerlink" title="print quickly"></a>print quickly</h5><p>直接调用println会很慢，为此使用一个缓冲区会有用。</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> std::io::&#123;<span class="keyword">self</span>, Write&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">stdout</span> = io::<span class="title function_ invoke__">stdout</span>(); <span class="comment">// get the global stdout entity</span></span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">handle</span> = io::BufWriter::<span class="title function_ invoke__">new</span>(stdout); <span class="comment">// optional: wrap that handle in a buffer</span></span><br><span class="line"><span class="built_in">writeln!</span>(handle, <span class="string">&quot;foo: &#123;&#125;&quot;</span>, <span class="number">42</span>); <span class="comment">// add `?` if you care about errors here</span></span><br></pre></td></tr></table></figure>
+
+<p>直接这么写会得到warning</p>
+<blockquote>
+<p>warning: unused <code>Result</code> that must be used<br>  –&gt; src&#x2F;main.rs:22:5<br>   |<br>22 |     writeln!(handle, “Pattern: {}”, args.pattern);<br>   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^<br>   |<br>   &#x3D; note: this <code>Result</code> may be an <code>Err</code> variant, which should be handled<br>   &#x3D; note: <code>#[warn(unused_must_use)]</code> on by default<br>   &#x3D; note: this warning originates in the macro <code>writeln</code> (in Nightly builds, run with -Z macro-backtrace for more info)</p>
+</blockquote>
+<p>为了去掉warning，锁定 <code>stdout</code>（或 <code>stderr</code>）并使用 <code>writeln!</code> 直接打印到它会有所帮助。这也可以防止系统反复锁定和解锁 <code>stdout</code>。为了简洁可以包装成一个函数</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">print_stdout</span>&lt;T: std::fmt::Display&gt;(s: T) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">stdout</span> = io::<span class="title function_ invoke__">stdout</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">handle</span> = io::BufWriter::<span class="title function_ invoke__">new</span>(stdout.<span class="title function_ invoke__">lock</span>());</span><br><span class="line">    <span class="built_in">writeln!</span>(handle, <span class="string">&quot;&#123;&#125;&quot;</span>, s).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//invoking</span></span><br><span class="line">    <span class="title function_ invoke__">print_stdout</span>(<span class="built_in">format!</span>(<span class="string">&quot;Pattern: &#123;&#125;&quot;</span>, args.pattern));</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="进度条"><a href="#进度条" class="headerlink" title="进度条"></a>进度条</h5><p>使用 <a target="_blank" rel="noopener" href="https://crates.io/crates/indicatif">indicatif</a> 板条箱，您可以向您的程序添加进度条和小旋转器。这是一个快速示例</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">pb</span> = indicatif::ProgressBar::<span class="title function_ invoke__">new</span>(<span class="number">100</span>);</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">100</span> &#123;</span><br><span class="line">        <span class="title function_ invoke__">do_hard_work</span>();</span><br><span class="line">        pb.<span class="title function_ invoke__">println</span>(<span class="built_in">format!</span>(<span class="string">&quot;[+] finished #&#123;&#125;&quot;</span>, i));</span><br><span class="line">        pb.<span class="title function_ invoke__">inc</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    pb.<span class="title function_ invoke__">finish_with_message</span>(<span class="string">&quot;done&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="log"><a href="#log" class="headerlink" title="log"></a>log</h5><p>cli需要日志。</p>
+<p>向您的应用程序添加简单记录，您需要两件事：<a target="_blank" rel="noopener" href="https://crates.io/crates/log">log</a> 板条箱（它包含以日志级别命名的宏）和一个实际将日志输出写入某个有用位置的<em>适配器</em>。能够使用日志适配器非常灵活：例如，您可以使用它们将日志写入终端，还可以写入 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Syslog">syslog</a> 或中央日志服务器。</p>
+<p>由于我们现在只关心编写 CLI 应用程序，因此一个易于使用的适配器是 <a target="_blank" rel="noopener" href="https://crates.io/crates/env_logger">env_logger</a>。它被称为“env”记录器，因为您可以使用环境变量来指定要记录应用程序的哪些部分（以及要记录它们的级别）。它将在您的日志消息前面加上时间戳和日志消息来自的模块。由于库也可以使用 <code>log</code>，因此您也可以轻松配置它们的日志输出。</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="meta">#[warn(unused_imports)]</span></span><br><span class="line"><span class="keyword">use</span> std::&#123;</span><br><span class="line">    path,</span><br><span class="line">    error::Error,</span><br><span class="line">    fs,</span><br><span class="line">    io::&#123;<span class="keyword">self</span>, Write&#125;,</span><br><span class="line">    env</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">use</span> anyhow::&#123;Context, <span class="type">Result</span>&#125;;</span><br><span class="line"><span class="keyword">use</span> clap::Parser;</span><br><span class="line"><span class="keyword">use</span> log::&#123;info, warn, error, debug, LevelFilter&#125;;</span><br><span class="line"><span class="keyword">use</span> env_logger::&#123;Builder, WriteStyle&#125;;</span><br><span class="line"><span class="meta">#[derive(Parser)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">CLI</span> &#123;</span><br><span class="line">    pattern: <span class="type">String</span>,</span><br><span class="line">    path: path::PathBuf,</span><br><span class="line">    <span class="meta">#[clap(long, default_value = <span class="string">&quot;app.log&quot;</span>)]</span></span><br><span class="line">    log_file: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[warn(unused_imports)]</span></span><br><span class="line"><span class="meta">#[tokio::main]</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">main</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), <span class="type">Box</span>&lt;<span class="keyword">dyn</span> Error&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">args</span> = CLI::<span class="title function_ invoke__">parse</span>();</span><br><span class="line">    <span class="title function_ invoke__">setup_logger</span>(&amp;args.log_file)?;</span><br><span class="line">    info!(<span class="string">&quot;搜索模式: &#123;&#125;&quot;</span>, args.pattern);</span><br><span class="line">    info!(<span class="string">&quot;搜索路径: &#123;&#125;&quot;</span>, args.path.<span class="title function_ invoke__">display</span>());</span><br><span class="line">    <span class="title function_ invoke__">print_stdout</span>(<span class="built_in">format!</span>(<span class="string">&quot;Pattern: &#123;&#125;&quot;</span>, args.pattern));</span><br><span class="line">    <span class="title function_ invoke__">print_stdout</span>(<span class="built_in">format!</span>(<span class="string">&quot;Path: &#123;&#125;&quot;</span>, args.path.<span class="title function_ invoke__">display</span>())); </span><br><span class="line">    debug!(<span class="string">&quot;开始文件读取和搜索操作&quot;</span>);</span><br><span class="line">    <span class="keyword">async</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">addr</span> = args.path.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">        <span class="keyword">return</span> fs::<span class="title function_ invoke__">read_to_string</span>(&amp;addr)</span><br><span class="line">            .<span class="title function_ invoke__">with_context</span>(|| &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">err_msg</span> = <span class="built_in">format!</span>(<span class="string">&quot;Failed to read file: &#123;&#125;&quot;</span>, addr.<span class="title function_ invoke__">display</span>());</span><br><span class="line">                error!(<span class="string">&quot;&#123;&#125;&quot;</span>, err_msg);</span><br><span class="line">                err_msg</span><br><span class="line">            &#125;)</span><br><span class="line">            .<span class="title function_ invoke__">map</span>(|content| &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">count</span> = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">for</span> (line_num, line) <span class="keyword">in</span> content.<span class="title function_ invoke__">lines</span>().<span class="title function_ invoke__">enumerate</span>() &#123;</span><br><span class="line">                    <span class="keyword">if</span> line.<span class="title function_ invoke__">contains</span>(&amp;args.pattern) &#123;</span><br><span class="line">                        count += <span class="number">1</span>;</span><br><span class="line">                        debug!(<span class="string">&quot;在行 &#123;&#125; 找到匹配: &#123;&#125;&quot;</span>, line_num + <span class="number">1</span>, line);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">result_msg</span> = <span class="built_in">format!</span>(<span class="string">&quot;Pattern &#x27;&#123;&#125;&#x27; found &#123;&#125; times&quot;</span>, args.pattern, count);</span><br><span class="line">                info!(<span class="string">&quot;&#123;&#125;&quot;</span>, result_msg);</span><br><span class="line">                <span class="title function_ invoke__">print_stdout</span>(result_msg);            &#125;)</span><br><span class="line">        </span><br><span class="line">    &#125;.<span class="keyword">await</span>?;</span><br><span class="line">    info!(<span class="string">&quot;程序正常结束&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">print_stdout</span>&lt;T: std::fmt::Display&gt;(s: T) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">stdout</span> = io::<span class="title function_ invoke__">stdout</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">handle</span> = io::BufWriter::<span class="title function_ invoke__">new</span>(stdout.<span class="title function_ invoke__">lock</span>());</span><br><span class="line">    <span class="built_in">writeln!</span>(handle, <span class="string">&quot;&#123;&#125;&quot;</span>, s).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">setup_logger</span>(log_file_path: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), <span class="type">Box</span>&lt;<span class="keyword">dyn</span> Error&gt;&gt; &#123;</span><br><span class="line">    <span class="comment">// 创建日志文件，使用追加模式</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">log_file</span> = fs::OpenOptions::<span class="title function_ invoke__">new</span>()</span><br><span class="line">        .<span class="title function_ invoke__">create</span>(<span class="literal">true</span>)</span><br><span class="line">        .<span class="title function_ invoke__">write</span>(<span class="literal">true</span>)</span><br><span class="line">        .<span class="title function_ invoke__">append</span>(<span class="literal">true</span>)</span><br><span class="line">        .<span class="title function_ invoke__">open</span>(log_file_path)?;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 构建自定义 logger</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">builder</span> = Builder::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    builder</span><br><span class="line">        .<span class="title function_ invoke__">target</span>(env_logger::Target::<span class="title function_ invoke__">Pipe</span>(<span class="type">Box</span>::<span class="title function_ invoke__">new</span>(log_file)))</span><br><span class="line">        .<span class="title function_ invoke__">filter_level</span>(LevelFilter::<span class="built_in">Debug</span>)</span><br><span class="line">        .<span class="title function_ invoke__">write_style</span>(WriteStyle::Always)</span><br><span class="line">        .format_timestamp_secs()</span><br><span class="line">        .format_module_path(<span class="literal">true</span>)</span><br><span class="line">        .<span class="title function_ invoke__">init</span>();</span><br><span class="line">    </span><br><span class="line">    info!(<span class="string">&quot;日志系统初始化完成，日志文件: &#123;&#125;&quot;</span>, log_file_path);</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个程序略显臃肿。</p>
+<h5 id="test"><a href="#test" class="headerlink" title="test"></a>test</h5><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Test-driven_development">测试驱动开发</a>可以看看这个</p>
+<p>rust有内置的测试框架，只是测试的话不该写在这里。</p>
+<p>那么如何测试一个CLI程序？</p>
+<p>首先从单元测试开始。</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">find_matches</span>(content: &amp;<span class="type">str</span>, pattern: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;(<span class="type">usize</span>, <span class="type">String</span>)&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">matches</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">for</span> (line_num, line) <span class="keyword">in</span> content.<span class="title function_ invoke__">lines</span>().<span class="title function_ invoke__">enumerate</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> line.<span class="title function_ invoke__">contains</span>(pattern) &#123;</span><br><span class="line">            info!(<span class="string">&quot;找到匹配: &#123;&#125; (行 &#123;&#125;)&quot;</span>, line, line_num + <span class="number">1</span>);</span><br><span class="line">            matches.<span class="title function_ invoke__">push</span>((line_num + <span class="number">1</span>, line.<span class="title function_ invoke__">to_string</span>()));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    matches</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">find_a_match</span>() &#123;</span><br><span class="line">    <span class="title function_ invoke__">find_matches</span>(<span class="string">&quot;lorem ipsum\ndolor sit amet&quot;</span>, <span class="string">&quot;lorem&quot;</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        <span class="title function_ invoke__">find_matches</span>(<span class="string">&quot;lorem ipsum\ndolor sit amet&quot;</span>, <span class="string">&quot;lorem&quot;</span>),</span><br><span class="line">        <span class="built_in">vec!</span>[(<span class="number">1</span>, <span class="string">&quot;lorem ipsum&quot;</span>.<span class="title function_ invoke__">to_string</span>())]</span><br><span class="line">    );</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        <span class="title function_ invoke__">find_matches</span>(<span class="string">&quot;lorem ipsum\ndolor sit amet&quot;</span>, <span class="string">&quot;ipsum&quot;</span>),</span><br><span class="line">        <span class="built_in">vec!</span>[(<span class="number">1</span>, <span class="string">&quot;lorem ipsum&quot;</span>.<span class="title function_ invoke__">to_string</span>())]</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时打印在日志中可以简单捕获。如果是会打印到stdout中的功能，则需要<code>std::io::Write</code>trait的实现</p>
+<p>例如下面的代码：</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">print_stdout_with_handle</span>&lt;T: std::fmt::Display&gt;(s: T, handle: &amp;<span class="keyword">mut</span> <span class="keyword">impl</span> <span class="title class_">Write</span>) &#123;</span><br><span class="line">    <span class="built_in">writeln!</span>(handle, <span class="string">&quot;&#123;&#125;&quot;</span>, s).<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_find_matches_stdout</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">buffer</span> = <span class="type">Vec</span>::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="title function_ invoke__">find_matches_stdout</span>(<span class="string">&quot;lorem ipsum\ndolor sit amet&quot;</span>, <span class="string">&quot;lorem&quot;</span>, &amp;<span class="keyword">mut</span> buffer);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        <span class="type">String</span>::<span class="title function_ invoke__">from_utf8</span>(buffer).<span class="title function_ invoke__">unwrap</span>(),</span><br><span class="line">        <span class="string">&quot;在行 1 找到匹配:lorem ipsum\n&quot;</span></span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>buffer参数的存在能让测试时获得stdout的数据用于测试。</p>
+<p>为了易于测试，做到的东西会有：</p>
+<ol>
+<li>确定了我们应用程序的核心部分之一，</li>
+<li>将其放入自己的函数中，</li>
+<li>并使其更加灵活。</li>
+</ol>
+<p>当然作为命令行程序也要从用户的角度测试使用，可以尝试assert_fs</p>
+<figure class="highlight rust"><table><tr><td class="code"><pre><span class="line"><span class="keyword">use</span> assert_fs::prelude::*;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">find_content_in_file</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), <span class="type">Box</span>&lt;<span class="keyword">dyn</span> std::error::Error&gt;&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">file</span> = assert_fs::NamedTempFile::<span class="title function_ invoke__">new</span>(<span class="string">&quot;sample.txt&quot;</span>)?;</span><br><span class="line">    file.<span class="title function_ invoke__">write_str</span>(<span class="string">&quot;A test\nActual content\nMore content\nAnother test&quot;</span>)?;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cmd</span> = Command::<span class="title function_ invoke__">cargo_bin</span>(<span class="string">&quot;grrs&quot;</span>)?;</span><br><span class="line">    cmd.<span class="title function_ invoke__">arg</span>(<span class="string">&quot;test&quot;</span>).<span class="title function_ invoke__">arg</span>(file.<span class="title function_ invoke__">path</span>());</span><br><span class="line">    cmd.<span class="title function_ invoke__">assert</span>()</span><br><span class="line">        .<span class="title function_ invoke__">success</span>()</span><br><span class="line">        .<span class="title function_ invoke__">stdout</span>(predicate::<span class="type">str</span>::<span class="title function_ invoke__">contains</span>(<span class="string">&quot;A test\nAnother test&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>根据你的程序的性质，你还可以尝试添加更多的测试技术。例如，如果你已经提取了程序的部分内容，并且发现自己在编写大量示例用例作为单元测试，同时试图找出所有边缘情况，你应该研究 <a target="_blank" rel="noopener" href="https://docs.rs/proptest"><code>proptest</code></a>。如果你的程序消耗任意文件并解析它们，请尝试编写一个 <a target="_blank" rel="noopener" href="https://rust-fuzz.github.io/book/introduction.html">fuzzer</a> 以查找边缘情况下的错误。</p>
+</blockquote>
+<h5 id="more"><a href="#more" class="headerlink" title="more"></a>more</h5><p>处理ctrl+c等unix信号：<a target="_blank" rel="noopener" href="https://crates.io/crates/signal-hook">https://crates.io/crates/signal-hook</a></p>
+<p>使用通道作为线程同步点：<a target="_blank" rel="noopener" href="https://crates.io/crates/crossbeam-channel">https://crates.io/crates/crossbeam-channel</a></p>
+<p>future和streams：如果您正在使用 <a target="_blank" rel="noopener" href="https://tokio.rust-lang.net.cn/">tokio</a>，您很可能已经使用异步模式和事件驱动设计来编写应用程序。您可以启用 signal-hook 的 <code>tokio-support</code> 功能，而不是直接使用 crossbeam 的通道。这允许您在 signal-hook 的 <code>Signals</code> 类型上调用 <a target="_blank" rel="noopener" href="https://docs.rs/signal-hook/0.1.6/signal_hook/iterator/struct.Signals.html#method.into_async"><code>.into_async()</code></a>，以获取一个实现 <code>futures::Stream</code> 的新类型。</p>
+<p>配置文件的使用：<a target="_blank" rel="noopener" href="https://docs.rs/confy/0.3.1/confy/">https://docs.rs/confy/0.3.1/confy/</a></p>
+<p>友好地处理panic：<a target="_blank" rel="noopener" href="https://crates.io/crates/human-panic">https://crates.io/crates/human-panic</a></p>
+<p>区分使用者是人类还是Terminal：<a target="_blank" rel="noopener" href="https://doc.rust-lang.net.cn/stable/std/io/trait.IsTerminal.html">https://doc.rust-lang.net.cn/stable/std/io/trait.IsTerminal.html</a></p>
+<p>为命令行渲染文档：<a target="_blank" rel="noopener" href="https://crates.io/crates/clap_mangen">https://crates.io/crates/clap_mangen</a></p>
+<h4 id="thread-process"><a href="#thread-process" class="headerlink" title="thread&#x2F;process"></a>thread&#x2F;process</h4><blockquote>
+<p>进程和线程的处理方式存在许多细微的差异。最重要的区别是内存在线程之间共享，而不是在进程之间共享。这意味着进程之间的通信是通过某种消息传递进行的，类似于在不同计算机上运行的程序之间的通信。</p>
+</blockquote>
+<h5 id="process"><a href="#process" class="headerlink" title="process"></a>process</h5><h5 id="threads"><a href="#threads" class="headerlink" title="threads"></a>threads</h5></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://luvroc.github.io">luvroc</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://luvroc.github.io/2025/04/23/code%20with%20topic/">http://luvroc.github.io/2025/04/23/code%20with%20topic/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://luvroc.github.io" target="_blank">uloveRock?</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/mess/">mess</a></div><div class="post_share"><div class="social-share" data-image="https://q1.qlogo.cn/g?b=qq&amp;nk=2316139590&amp;s=640" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/04/23/model/" title="简历collect"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">简历collect</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/04/23/code-Review/" title="code-Review"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-23</div><div class="title">code-Review</div></div></a></div><div><a href="/2025/04/23/nihongo/" title="日语笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-04-23</div><div class="title">日语笔记</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://q1.qlogo.cn/g?b=qq&amp;nk=2316139590&amp;s=640" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">luvroc</div><div class="author-info__description">dont look back in anger</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/luvroc"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">八月主要更新solana和rCore-Tutorial</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#code-with-topic"><span class="toc-number">1.</span> <span class="toc-text">code with topic</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#async"><span class="toc-number">1.1.</span> <span class="toc-text">async</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#async-await"><span class="toc-number">1.1.1.</span> <span class="toc-text">async await</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#cancellation"><span class="toc-number">1.1.2.</span> <span class="toc-text">cancellation</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#block-of-async"><span class="toc-number">1.1.3.</span> <span class="toc-text">block of async</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#demo"><span class="toc-number">1.1.4.</span> <span class="toc-text">demo</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#p2p-network"><span class="toc-number">1.2.</span> <span class="toc-text">p2p network</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#concept"><span class="toc-number">1.2.1.</span> <span class="toc-text">concept</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#addressing"><span class="toc-number">1.2.2.</span> <span class="toc-text">addressing</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#protocol"><span class="toc-number">1.2.3.</span> <span class="toc-text">protocol</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#binary-streams"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">binary streams</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#protocol-negotiation"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">protocol negotiation</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#match-protocol-ID-and-version"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">match protocol ID and version</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#Core-protocol"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">Core protocol</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#QUIC"><span class="toc-number">1.2.4.</span> <span class="toc-text">QUIC</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#in-p2p"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">in p2p</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Stream"><span class="toc-number">1.2.5.</span> <span class="toc-text">Stream</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#multiplexing"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">multiplexing</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Project"><span class="toc-number">1.2.6.</span> <span class="toc-text">Project</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#protocol-floodsub"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">protocol&#x2F;floodsub</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#chat"><span class="toc-number">1.2.6.2.</span> <span class="toc-text">chat</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Write-a-CLI"><span class="toc-number">1.3.</span> <span class="toc-text">Write a CLI</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Error-handling"><span class="toc-number">1.3.1.</span> <span class="toc-text">Error handling</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#pipe"><span class="toc-number">1.3.2.</span> <span class="toc-text">pipe</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#print-quickly"><span class="toc-number">1.3.3.</span> <span class="toc-text">print quickly</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BF%9B%E5%BA%A6%E6%9D%A1"><span class="toc-number">1.3.4.</span> <span class="toc-text">进度条</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#log"><span class="toc-number">1.3.5.</span> <span class="toc-text">log</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#test"><span class="toc-number">1.3.6.</span> <span class="toc-text">test</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#more"><span class="toc-number">1.3.7.</span> <span class="toc-text">more</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#thread-process"><span class="toc-number">1.4.</span> <span class="toc-text">thread&#x2F;process</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#process"><span class="toc-number">1.4.1.</span> <span class="toc-text">process</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#threads"><span class="toc-number">1.4.2.</span> <span class="toc-text">threads</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/23/code%20with%20topic/" title="Code With Topic">Code With Topic</a><time datetime="2025-04-23T04:00:00.000Z" title="发表于 2025-04-23 12:00:00">2025-04-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/23/model/" title="简历collect">简历collect</a><time datetime="2025-04-23T04:00:00.000Z" title="发表于 2025-04-23 12:00:00">2025-04-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/23/code-Review/" title="code-Review">code-Review</a><time datetime="2025-04-23T04:00:00.000Z" title="发表于 2025-04-23 12:00:00">2025-04-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/23/nihongo/" title="日语笔记">日语笔记</a><time datetime="2025-04-23T04:00:00.000Z" title="发表于 2025-04-23 12:00:00">2025-04-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/01/solanaNotes/" title="solanaNotes">solanaNotes</a><time datetime="2024-07-31T18:35:00.000Z" title="发表于 2024-08-01 02:35:00">2024-08-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By luvroc</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
